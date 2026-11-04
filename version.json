@@ -1,6 +1,6 @@
 {
   "versionCode": 1000019,
   "versionName": "1.6.8",
-  "url": "https://github.com/lujih/mrds-harmony/releases/latest/download/mrds-latest.hap",
+  "url": "https://ghproxy.net/https://github.com/lujih/mrds-harmony/releases/latest/download/mrds-latest.hap",
   "notes": "废弃 API 迁移（getUIContext/getPromptAction）、详情图片滚动到底自动加载、分类合并展示。"
 }
