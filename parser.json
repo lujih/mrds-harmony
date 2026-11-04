@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "updatedAt": "2026-11-05",
+  "list": {
+    "title": [
+      "<h2[^>]*class=\"post-card-title\"[^>]*>([\\s\\S]*?)</h2>",
+      "<h2[^>]*>([\\s\\S]*?)</h2>"
+    ],
+    "cover": [
+      "loadBannerDirect\\('([^']+)'",
+      "loadBannerDirect\\(\"([^\"]+)\"",
+      "data-bg=\"([^\"]+)\"",
+      "<img[^>]*src=\"([^\"]+)\""
+    ],
+    "infoBlock": "<div class=\"post-card-info\">([\\s\\S]*?)</div>",
+    "author": "itemprop=\"author\"[^>]*>([\\s\\S]*?)</span>",
+    "dateMeta": "itemprop=\"datePublished\" content=\"([^\"]+)\"",
+    "dateText": "itemprop=\"datePublished\"[^>]*>([\\s\\S]*?)</span>",
+    "badge": "<span class=\"wraps\">([^<]*)</span>"
+  },
+  "detail": {
+    "title": [
+      "<h1[^>]*>([\\s\\S]*?)</h1>",
+      "<meta property=\"og:title\" content=\"([^\"]+)\""
+    ],
+    "bodyStart": "itemprop=\"articleBody\"",
+    "bodyEnd": [
+      "<div class=\"tags\"",
+      "<footer"
+    ],
+    "imageAttrs": [
+      "data-xkrkllgl",
+      "data-src",
+      "src"
+    ],
+    "videoConfig": "data-config='([\\s\\S]*?)'",
+    "videoUrl": "\"url\"\\s*:\\s*\"(https?:[^\"]+\\.m3u8[^\"]*)\""
+  },
+  "search": {
+    "next": "class=\"next\"[\\s\\S]{0,120}?href=\"([^\"]+)\""
+  }
+}
