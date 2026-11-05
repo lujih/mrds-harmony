@@ -1,6 +1,9 @@
 {
-  "versionCode": 1000019,
-  "versionName": "1.6.8",
+  "versionCode": 1000020,
+  "versionName": "1.6.9",
   "url": "https://ghproxy.net/https://github.com/lujih/mrds-harmony/releases/latest/download/mrds-latest.hap",
-  "notes": "废弃 API 迁移（getUIContext/getPromptAction）、详情图片滚动到底自动加载、分类合并展示。"
+  "notes": "界面改版（首页/搜索/我的统一排版与字号）、图片按原比例展示并支持点按重试、详情页振动反馈、站点自愈（远程解析规则+健康检查自动换线）、离线收藏（详情与图片本地化，断网可读）。",
+  "sha256": "fbdb07acfcff82fa56f9a59ead3cceec269cafff7216a813fa25790dcc00a457",
+  "sizeMb": "1.27 MB",
+  "releasedAt": "2026-11-06"
 }
