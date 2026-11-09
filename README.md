@@ -71,8 +71,17 @@ HoKit 里的等价操作：「工具箱 → 终端」执行上面的命令；或
 
 - HoKit「重签名 → 已注册设备」可查看并快速注册本机设备（开发者账号调试设备上限 100 台）；
 - 设备不方便注册：用 HoKit「应用重签名」，以你自己账号下的调试证书 + Profile 重签，再安装重签后的包；
-- **更换签名后覆盖安装会失败**（`install sign info inconsistent`），需先 `hdc uninstall com.mrds.app`；卸载会清除本机数据，且不可恢复；
-- 面向公众分发需要改用 **release 签名**重新出包（`devecocli signature generate --type release` → `SIGNING_CONFIG=default_release`）。
+- **更换签名后覆盖安装会失败**（`install sign info inconsistent`），需先 `hdc uninstall com.mrds.app`；卸载会清除本机数据，且不可恢复。
+
+HarmonyOS 官方把 HAP 装到「非本机」的路径只有三条：
+
+| 路径 | 前提 | 适用场景 |
+| --- | --- | --- |
+| 调试签名（关联手机的手动签名）+ `hdc install` | 目标设备 UDID 已注册到开发者账号 | 自用 / 小范围；**当前线上包走这条** |
+| DevEco Testing 安装 | 同上，另需配套工具链 | 测试同学批量装 |
+| **指定设备发布** | 发布证书 + UDID 注册到 AGC 设备列表 + 申请「指定设备发布」的 Profile | 面向一批授权设备分发；包可放自有服务器/云 |
+
+> 注意事项：指定设备发布的包**不支持在模拟器安装**；每增加一台受众设备都要回 AGC 修改 Profile 并重新打包，属于常态化运维成本。「生成 release 签名就能谁都能装」并不成立。
 
 ---
 
