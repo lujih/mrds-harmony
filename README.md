@@ -31,21 +31,48 @@ SHA256SUMS           安装包校验和（sha256sum 格式）
 ```
 
 > **微信 / QQ 内置浏览器会拦截 `.hap` 下载**，请复制链接到系统浏览器（Chrome / Edge / 夸克 / UC）打开。
+> 下载到的 HAP **不是双击就能装的安装包**：HarmonyOS NEXT 必须按第二节用 `hdc` / HoKit 侧载。
 
 ---
 
-## 二、安装
+## 二、安装（HarmonyOS NEXT 侧载）
 
-1. 用系统浏览器下载 `.hap` 文件（不要用微信内置浏览器）。
-2. 设置 → 安全 → 更多安全设置 → 允许「安装未知来源应用」。
-3. 打开「文件管理」，找到下载的 `.hap`，按提示安装。
-4. **覆盖安装**会保留收藏、历史、搜索记录、播放进度与代理设置；无需重新登录（本应用没有账号体系）。
+HarmonyOS NEXT **不支持在文件管理器里点开 HAP 直接安装**，也没有 Android 那种「允许安装未知来源应用」开关。HAP 只能通过 `hdc`（设备开开发者模式 + USB / 无线调试）装进去，或者用封装了 `hdc` 的图形化侧载工具。
 
-### 关于签名
+### 1. 设备准备
 
-- 当前线上的安装包是 **debug 签名**：只有在该开发者账号下注册过的调试设备才能安装，普通设备会提示安装失败。
+1. 设置 → 关于本机 → 连续点击「版本号」7 次，开启开发者模式；
+2. 设置 → 系统和更新 → 开发人员选项 → 打开「USB 调试」；
+3. USB 数据线连接电脑，手机上弹出调试授权时点「允许」。
+
+### 2. 选一个侧载工具
+
+| 工具 | 平台 | 说明 |
+| --- | --- | --- |
+| [HoKit](https://github.com/yabi-zzh/HoKit) | Windows `.exe` · macOS `.dmg`（arm64 / x64）· Linux `.AppImage` | 内置 hdc 与 JRE；带设备注册、应用解析、应用重签名、文件管理、终端与日志，无需另装 SDK |
+| DevEco Studio | Windows / macOS | 自带 hdc，可用 Run 直接安装 |
+| 纯 hdc 命令行 | 任意 | SDK 里的 `hdc` 即可，适合脚本化 |
+
+### 3. 安装
+
+```bash
+hdc list targets                    # 确认设备在线；无输出 = 未连接或未授权
+hdc install -r mrds-latest.hap      # -r 覆盖安装，保留收藏/历史/设置
+# 无线调试（先在手机上开启「无线调试」，或用 hdc tconn 配对）
+hdc tconn 192.168.1.20:5555
+hdc install -r mrds-latest.hap
+```
+
+HoKit 里的等价操作：「工具箱 → 终端」执行上面的命令；或用「文件管理」把 HAP 推到设备后再装。
+
+### 4. 签名与设备注册（debug 包必看）
+
+线上包是 **debug 签名**，只有 **UDID 已注册到该开发者账号** 的设备能装，其它设备会报签名校验失败（`signature verify failed` 一类错误）。
+
+- HoKit「重签名 → 已注册设备」可查看并快速注册本机设备（开发者账号调试设备上限 100 台）；
+- 设备不方便注册：用 HoKit「应用重签名」，以你自己账号下的调试证书 + Profile 重签，再安装重签后的包；
+- **更换签名后覆盖安装会失败**（`install sign info inconsistent`），需先 `hdc uninstall com.mrds.app`；卸载会清除本机数据，且不可恢复；
 - 面向公众分发需要改用 **release 签名**重新出包（`devecocli signature generate --type release` → `SIGNING_CONFIG=default_release`）。
-- **更换签名后覆盖安装会失败**（`install sign info inconsistent`），必须先卸载旧版；卸载会清除本机数据，且不可恢复。
 
 ---
 
@@ -180,11 +207,17 @@ node scripts/publish_release.mjs --repo lujih/mrds-harmony --tag v<version> \
 **下载不动 / 点下载跳到空白页**
 `releases/latest/download/...` 会 302 到 `release-assets.githubusercontent.com`。部分网络只放行 `github.com` 而拦截该域名，表现为下载失败。改用代理或 `ghproxy.net` 前缀重试。
 
-**微信里点了没反应**
-微信内置浏览器拦截 `.hap`。复制链接到系统浏览器。
+**点开 HAP 没有任何反应 / 没有安装界面**
+这是正常现象。HarmonyOS NEXT 不提供「点开文件安装」，必须走 `hdc install`（或用 HoKit 的终端/文件管理）。见第二节。
 
-**装不上，提示签名不一致**
-当前包为 debug 签名，或你之前装的是另一套签名。先卸载旧版再装；卸载会丢本机数据。
+**微信里点了没反应**
+微信内置浏览器拦截 `.hap`。复制链接到系统浏览器下载，再用侧载工具安装。
+
+**装不上，提示签名校验失败（`signature verify failed` / `9568xxx`）**
+两种原因：① 当前包是 debug 签名，你这台设备的 UDID 没注册到对应开发者账号；② 设备上已有的同包名应用用的是另一套签名。解法：用 HoKit 重签名（用自己的调试证书）或先 `hdc uninstall com.mrds.app` 再装。
+
+**应用内「去下载」下完装不上**
+应用内只负责把 HAP 下到手机；安装仍需电脑侧载（HAP 可先用 HoKit 文件管理从手机取回，或直接在电脑下载）。
 
 **检查更新说已是最新，但 Release 有新版**
 客户端第 1 跳走 ghproxy，缓存通常几分钟；jsDelivr（第 4 跳）可能滞后数小时。以 `releases/latest` 与仓库根 `version.json` 为准，稍后重试。
